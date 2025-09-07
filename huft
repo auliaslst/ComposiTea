@@ -1,0 +1,344 @@
+// Toggle Forms
+function showRegister() {
+  document.getElementById("loginForm").classList.add("hidden");
+  document.getElementById("registerForm").classList.remove("hidden");
+  document.getElementById("forgotForm").classList.add("hidden");
+}
+function showLogin() {
+  document.getElementById("loginForm").classList.remove("hidden");
+  document.getElementById("registerForm").classList.add("hidden");
+  document.getElementById("forgotForm").classList.add("hidden");
+}
+function showForgot() {
+  document.getElementById("loginForm").classList.add("hidden");
+  document.getElementById("registerForm").classList.add("hidden");
+  document.getElementById("forgotForm").classList.remove("hidden");
+}
+
+// Login Simulation
+document.getElementById("loginForm")?.addEventListener("submit", function(e) {
+  e.preventDefault();
+  window.location.href = "dashboard.html";
+});
+
+// Register Simulation
+document.getElementById("registerForm")?.addEventListener("submit", function(e) {
+  e.preventDefault();
+  alert("Akun berhasil dibuat! Silakan login.");
+  showLogin();
+});
+
+// Forgot Password Simulation
+document.getElementById("forgotForm")?.addEventListener("submit", function(e) {
+  e.preventDefault();
+  alert("Link reset password telah dikirim via SMS!");
+  showLogin();
+});
+
+// Dashboard Navigation
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+  document.getElementById(page + "Page").classList.remove("hidden");
+}
+
+// Profile Dropdown
+function toggleProfile() {
+  document.getElementById("profileMenu").classList.toggle("hidden");
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0; padding: 0;
+  background-color: #f5f0e6;
+}
+
+h1, h2, h3 { color: #4e342e; }
+
+button {
+  background: #6d4c41;
+  color: white;
+  padding: 8px 12px;
+  border: none; border-radius: 6px;
+  cursor: pointer;
+}
+button:hover { background: #5d4037; }
+
+input, select {
+  display: block;
+  margin: 8px 0;
+  padding: 6px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Login Page */
+.login-body {
+  display: flex; justify-content: center; align-items: center;
+  height: 100vh;
+}
+.login-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.logo { width: 80px; margin-bottom: 10px; }
+.hidden { display: none; }
+.link { font-size: 0.9em; }
+
+/* Dashboard */
+.header {
+  background: #6d4c41;
+  color: white;
+  padding: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo-small { width: 40px; margin-right: 10px; }
+.sidebar {
+  background: #d7ccc8;
+  padding: 10px;
+  width: 200px;
+  height: calc(100vh - 60px);
+  float: left;
+}
+.content { margin-left: 210px; padding: 20px; }
+.page { background: white; padding: 15px; border-radius: 10px; }
+
+/* Profile Dropdown */
+.profile-dropdown { position: relative; }
+.dropdown {
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 150px;
+  z-index: 1;
+}
+.dropdown a {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: #4e342e;
+}
+.dropdown a:hover { background: #f0e0d6; }
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComposiTea - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <img src="assets/logo.png" alt="ComposiTea Logo" class="logo-small">
+    <h2>ComposiTea</h2>
+    <div class="profile-dropdown">
+      <button onclick="toggleProfile()">Profil Saya ▾</button>
+      <div id="profileMenu" class="dropdown hidden">
+        <a href="#">Ubah Profil</a>
+        <a href="#">Ubah Alamat</a>
+        <a href="#">Ubah Nomor HP</a>
+        <a href="#">Riwayat Transaksi</a>
+        <a href="index.html">Log Out</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <!-- Sidebar kiri -->
+    <aside class="sidebar">
+      <button onclick="showPage('kirim')">📦 Kirim Limbah</button>
+      <button onclick="showPage('status')">🚚 Status Pengiriman</button>
+      <button onclick="showPage('riwayat')">📜 Riwayat Transaksi</button>
+    </aside>
+
+    <!-- Konten -->
+    <section class="content">
+      <div id="kirimPage" class="page hidden">
+        <h3>📦 Kirim Limbah</h3>
+        <label>Pilih Limbah:</label>
+        <select>
+          <option>Ampas Kopi</option>
+          <option>Ampas Teh</option>
+        </select>
+        <label>Tukar Reward:</label>
+        <select>
+          <option>Pupuk Kompos</option>
+          <option>Tinta Kerajinan</option>
+          <option>Spidol</option>
+          <option>Poin Reward</option>
+        </select>
+        <label>Lokasi Penjemputan:</label>
+        <input type="text" placeholder="Masukkan alamat penjemputan">
+        <button>Kirim</button>
+      </div>
+
+      <div id="statusPage" class="page hidden">
+        <h3>🚚 Status Pengiriman</h3>
+        <label><input type="radio" name="status"> Penjemputan Limbah</label><br>
+        <label><input type="radio" name="status"> Pengiriman Produk</label>
+      </div>
+
+      <div id="riwayatPage" class="page hidden">
+        <h3>📜 Riwayat Transaksi</h3>
+        <ul>
+          <li>[05-09-2025] Ampas Kopi → Tukar Pupuk Kompos</li>
+          <li>[03-09-2025] Ampas Teh → Tukar Spidol</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComposiTea - Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #d7ccc8;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #4e342e;
+      color: white;
+      padding: 30px;
+      border-radius: 8px;
+      width: 350px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffcc80;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: #8d6e63;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 5px;
+    }
+    button:hover { background: #6d4c41; }
+    .link { margin-top: 10px; font-size: 14px; cursor: pointer; color: #ffcc80; }
+  </style>
+</head>
+<body>
+  <div class="container" id="loginBox">
+    <div class="logo">☕ ComposiTea</div>
+    <h3>Login</h3>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button onclick="login()">Masuk</button>
+    <div class="link" onclick="showRegister()">Belum punya akun? Daftar</div>
+    <div class="link" onclick="showForgot()">Lupa Password?</div>
+  </div>
+
+  <!-- Register Form -->
+  <div class="container" id="registerBox" style="display:none;">
+    <div class="logo">☕ ComposiTea</div>
+    <h3>Register</h3>
+    <input type="text" id="regUsername" placeholder="Username" required>
+    <input type="text" id="regAlamat" placeholder="Alamat Domisili / Kantor" required>
+    <input type="text" id="regPhone" placeholder="Nomor Telepon Aktif" required>
+    <input type="password" id="regPassword" placeholder="Password Baru" required>
+    <input type="password" id="regPassword2" placeholder="Ulangi Password" required>
+    <button onclick="register()">Daftar</button>
+    <div class="link" onclick="showLogin()">Sudah punya akun? Login</div>
+  </div>
+
+  <!-- Forgot Password Form -->
+  <div class="container" id="forgotBox" style="display:none;">
+    <div class="logo">☕ ComposiTea</div>
+    <h3>Lupa Password</h3>
+    <input type="text" id="forgotUsername" placeholder="Username" required>
+    <input type="text" id="forgotPhone" placeholder="Nomor Telepon Aktif" required>
+    <button onclick="forgotPassword()">Reset Password</button>
+    <div class="link" onclick="showLogin()">Kembali ke Login</div>
+  </div>
+
+  <script>
+    function showRegister() {
+      document.getElementById("loginBox").style.display="none";
+      document.getElementById("registerBox").style.display="block";
+      document.getElementById("forgotBox").style.display="none";
+    }
+    function showLogin() {
+      document.getElementById("loginBox").style.display="block";
+      document.getElementById("registerBox").style.display="none";
+      document.getElementById("forgotBox").style.display="none";
+    }
+    function showForgot() {
+      document.getElementById("loginBox").style.display="none";
+      document.getElementById("registerBox").style.display="none";
+      document.getElementById("forgotBox").style.display="block";
+    }
+
+    // Simpan akun baru
+    function register() {
+      let user = document.getElementById("regUsername").value;
+      let alamat = document.getElementById("regAlamat").value;
+      let phone = document.getElementById("regPhone").value;
+      let pass = document.getElementById("regPassword").value;
+      let pass2 = document.getElementById("regPassword2").value;
+      if(pass !== pass2) { alert("Password tidak sama!"); return; }
+
+      let akun = {username:user, alamat:alamat, phone:phone, password:pass, points:100};
+      localStorage.setItem("akun_"+user, JSON.stringify(akun));
+      alert("Akun berhasil dibuat!");
+      showLogin();
+    }
+
+    // Login
+    function login() {
+      let user = document.getElementById("loginUsername").value;
+      let pass = document.getElementById("loginPassword").value;
+      let data = JSON.parse(localStorage.getItem("akun_"+user));
+      if(data && data.password === pass) {
+        localStorage.setItem("activeUser", user);
+        window.location.href="dashboard.html";
+      } else {
+        alert("Username atau password salah!");
+      }
+    }
+
+    // Forgot password (simulasi kirim SMS)
+    function forgotPassword() {
+      let user = document.getElementById("forgotUsername").value;
+      let phone = document.getElementById("forgotPhone").value;
+      let data = JSON.parse(localStorage.getItem("akun_"+user));
+      if(data && data.phone === phone) {
+        alert("Link reset password dikirim ke nomor: "+phone+" via SMS (simulasi)");
+      } else {
+        alert("Data tidak cocok!");
+      }
+    }
+  </script>
+</body>
+</html>
