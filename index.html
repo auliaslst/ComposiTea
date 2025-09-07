@@ -2,31 +2,143 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ComposiTea - Login</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #d7ccc8;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #4e342e;
+      color: white;
+      padding: 30px;
+      border-radius: 8px;
+      width: 350px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffcc80;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: #8d6e63;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 5px;
+    }
+    button:hover { background: #6d4c41; }
+    .link { margin-top: 10px; font-size: 14px; cursor: pointer; color: #ffcc80; }
+  </style>
 </head>
-<body class="login-page">
-  <div class="login-container">
-    <h1>🌱 ComposiTea</h1>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Masuk</button>
-      <p><a href="#" onclick="toggleRegister()">Belum punya akun? Daftar</a></p>
-      <p><a href="#" onclick="lupaPassword()">Lupa password?</a></p>
-    </form>
-
-    <form id="registerForm" class="hidden">
-      <input type="text" id="newUsername" placeholder="Username" required>
-      <input type="text" id="alamat" placeholder="Alamat Domisili/Kantor" required>
-      <input type="text" id="nohp" placeholder="Nomor HP aktif" required>
-      <input type="password" id="newPassword" placeholder="Password" required>
-      <input type="password" id="confirmPassword" placeholder="Ulangi Password" required>
-      <button type="submit">Daftar</button>
-      <p><a href="#" onclick="toggleRegister()">Sudah punya akun? Masuk</a></p>
-    </form>
+<body>
+  <div class="container" id="loginBox">
+    <div class="logo">☕ ComposiTea</div>
+    <h3>Login</h3>
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button onclick="login()">Masuk</button>
+    <div class="link" onclick="showRegister()">Belum punya akun? Daftar</div>
+    <div class="link" onclick="showForgot()">Lupa Password?</div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Register Form -->
+  <div class="container" id="registerBox" style="display:none;">
+    <div class="logo">☕ ComposiTea</div>
+    <h3>Register</h3>
+    <input type="text" id="regUsername" placeholder="Username" required>
+    <input type="text" id="regAlamat" placeholder="Alamat Domisili / Kantor" required>
+    <input type="text" id="regPhone" placeholder="Nomor Telepon Aktif" required>
+    <input type="password" id="regPassword" placeholder="Password Baru" required>
+    <input type="password" id="regPassword2" placeholder="Ulangi Password" required>
+    <button onclick="register()">Daftar</button>
+    <div class="link" onclick="showLogin()">Sudah punya akun? Login</div>
+  </div>
+
+  <!-- Forgot Password Form -->
+  <div class="container" id="forgotBox" style="display:none;">
+    <div class="logo">☕ ComposiTea</div>
+    <h3>Lupa Password</h3>
+    <input type="text" id="forgotUsername" placeholder="Username" required>
+    <input type="text" id="forgotPhone" placeholder="Nomor Telepon Aktif" required>
+    <button onclick="forgotPassword()">Reset Password</button>
+    <div class="link" onclick="showLogin()">Kembali ke Login</div>
+  </div>
+
+  <script>
+    function showRegister() {
+      document.getElementById("loginBox").style.display="none";
+      document.getElementById("registerBox").style.display="block";
+      document.getElementById("forgotBox").style.display="none";
+    }
+    function showLogin() {
+      document.getElementById("loginBox").style.display="block";
+      document.getElementById("registerBox").style.display="none";
+      document.getElementById("forgotBox").style.display="none";
+    }
+    function showForgot() {
+      document.getElementById("loginBox").style.display="none";
+      document.getElementById("registerBox").style.display="none";
+      document.getElementById("forgotBox").style.display="block";
+    }
+
+    // Simpan akun baru
+    function register() {
+      let user = document.getElementById("regUsername").value;
+      let alamat = document.getElementById("regAlamat").value;
+      let phone = document.getElementById("regPhone").value;
+      let pass = document.getElementById("regPassword").value;
+      let pass2 = document.getElementById("regPassword2").value;
+      if(pass !== pass2) { alert("Password tidak sama!"); return; }
+
+      let akun = {username:user, alamat:alamat, phone:phone, password:pass, points:100};
+      localStorage.setItem("akun_"+user, JSON.stringify(akun));
+      alert("Akun berhasil dibuat!");
+      showLogin();
+    }
+
+    // Login
+    function login() {
+      let user = document.getElementById("loginUsername").value;
+      let pass = document.getElementById("loginPassword").value;
+      let data = JSON.parse(localStorage.getItem("akun_"+user));
+      if(data && data.password === pass) {
+        localStorage.setItem("activeUser", user);
+        window.location.href="dashboard.html";
+      } else {
+        alert("Username atau password salah!");
+      }
+    }
+
+    // Forgot password (simulasi kirim SMS)
+    function forgotPassword() {
+      let user = document.getElementById("forgotUsername").value;
+      let phone = document.getElementById("forgotPhone").value;
+      let data = JSON.parse(localStorage.getItem("akun_"+user));
+      if(data && data.phone === phone) {
+        alert("Link reset password dikirim ke nomor: "+phone+" via SMS (simulasi)");
+      } else {
+        alert("Data tidak cocok!");
+      }
+    }
+  </script>
 </body>
 </html>
