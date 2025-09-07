@@ -1,47 +1,99 @@
-// Toggle Forms
-function showRegister() {
-  document.getElementById("loginForm").classList.add("hidden");
-  document.getElementById("registerForm").classList.remove("hidden");
-  document.getElementById("forgotForm").classList.add("hidden");
-}
-function showLogin() {
-  document.getElementById("loginForm").classList.remove("hidden");
-  document.getElementById("registerForm").classList.add("hidden");
-  document.getElementById("forgotForm").classList.add("hidden");
-}
-function showForgot() {
-  document.getElementById("loginForm").classList.add("hidden");
-  document.getElementById("registerForm").classList.add("hidden");
-  document.getElementById("forgotForm").classList.remove("hidden");
+// === Toggle Login & Register ===
+function toggleRegister() {
+  document.getElementById("loginForm").classList.toggle("hidden");
+  document.getElementById("registerForm").classList.toggle("hidden");
 }
 
-// Login Simulation
-document.getElementById("loginForm")?.addEventListener("submit", function(e) {
+// === Simpan User Baru ===
+document.getElementById("registerForm").addEventListener("submit", e => {
   e.preventDefault();
-  window.location.href = "dashboard.html";
+  const user = {
+    username: document.getElementById("newUsername").value,
+    alamat: document.getElementById("alamat").value,
+    nohp: document.getElementById("nohp").value,
+    password: document.getElementById("newPassword").value
+  };
+  localStorage.setItem("user", JSON.stringify(user));
+  alert("✅ Akun berhasil dibuat, silakan login!");
+  toggleRegister();
 });
 
-// Register Simulation
-document.getElementById("registerForm")?.addEventListener("submit", function(e) {
+// === Login ===
+document.getElementById("loginForm").addEventListener("submit", e => {
   e.preventDefault();
-  alert("Akun berhasil dibuat! Silakan login.");
-  showLogin();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (user && user.username === username && user.password === password) {
+    window.location.href = "dashboard.html";
+  } else {
+    alert("❌ Username atau password salah!");
+  }
 });
 
-// Forgot Password Simulation
-document.getElementById("forgotForm")?.addEventListener("submit", function(e) {
-  e.preventDefault();
-  alert("Link reset password telah dikirim via SMS!");
-  showLogin();
-});
+// === Fitur Lupa Password (simulasi kirim SMS) ===
+function lupaPassword() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) {
+    alert("Belum ada akun terdaftar!");
+    return;
+  }
+  alert(`🔑 Link reset password dikirim ke nomor: ${user.nohp}`);
+}
 
-// Dashboard Navigation
+// === Dashboard Navigation ===
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
   document.getElementById(page + "Page").classList.remove("hidden");
 }
 
-// Profile Dropdown
-function toggleProfile() {
-  document.getElementById("profileMenu").classList.toggle("hidden");
+// === Load Riwayat ===
+function loadRiwayat() {
+  const riwayatList = document.getElementById("riwayatList");
+  if (!riwayatList) return; // supaya tidak error di halaman login
+  riwayatList.innerHTML = "";
+  const riwayatData = JSON.parse(localStorage.getItem("riwayatTransaksi")) || [];
+  riwayatData.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    riwayatList.appendChild(li);
+  });
 }
+
+// === Simpan Riwayat ===
+function saveRiwayat(newItem) {
+  const riwayatData = JSON.parse(localStorage.getItem("riwayatTransaksi")) || [];
+  riwayatData.unshift(newItem);
+  localStorage.setItem("riwayatTransaksi", JSON.stringify(riwayatData));
+}
+
+// === Event Kirim Limbah ===
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("kirimBtn")) {
+    document.getElementById("kirimBtn").addEventListener("click", () => {
+      const limbah = document.getElementById("limbahSelect").value;
+      const reward = document.getElementById("rewardSelect").value;
+      const lokasi = document.getElementById("lokasiInput").value;
+
+      if (lokasi.trim() === "") {
+        alert("⚠️ Lokasi penjemputan harus diisi!");
+        return;
+      }
+
+      const today = new Date();
+      const tgl = today.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric" });
+      const transaksi = `[${tgl}] ${limbah} → Tukar ${reward} @ ${lokasi}`;
+
+      const riwayatList = document.getElementById("riwayatList");
+      const newItem = document.createElement("li");
+      newItem.textContent = transaksi;
+      riwayatList.prepend(newItem);
+
+      saveRiwayat(transaksi);
+      alert("✅ Transaksi berhasil ditambahkan!");
+    });
+
+    loadRiwayat();
+  }
+});
