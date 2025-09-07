@@ -1,0 +1,79 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0; padding: 0;
+  background-color: #f5f0e6;
+}
+
+h1, h2, h3 { color: #4e342e; }
+
+button {
+  background: #6d4c41;
+  color: white;
+  padding: 8px 12px;
+  border: none; border-radius: 6px;
+  cursor: pointer;
+}
+button:hover { background: #5d4037; }
+
+input, select {
+  display: block;
+  margin: 8px 0;
+  padding: 6px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Login Page */
+.login-body {
+  display: flex; justify-content: center; align-items: center;
+  height: 100vh;
+}
+.login-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.logo { width: 80px; margin-bottom: 10px; }
+.hidden { display: none; }
+.link { font-size: 0.9em; }
+
+/* Dashboard */
+.header {
+  background: #6d4c41;
+  color: white;
+  padding: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo-small { width: 40px; margin-right: 10px; }
+.sidebar {
+  background: #d7ccc8;
+  padding: 10px;
+  width: 200px;
+  height: calc(100vh - 60px);
+  float: left;
+}
+.content { margin-left: 210px; padding: 20px; }
+.page { background: white; padding: 15px; border-radius: 10px; }
+
+/* Profile Dropdown */
+.profile-dropdown { position: relative; }
+.dropdown {
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 150px;
+  z-index: 1;
+}
+.dropdown a {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: #4e342e;
+}
+.dropdown a:hover { background: #f0e0d6; }

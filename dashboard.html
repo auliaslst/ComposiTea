@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - ComposiTea</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; }
+    header {
+      background: #4e342e;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-size: 20px; font-weight: bold; color: #ffcc80; }
+    nav { display: flex; gap: 15px; }
+    nav button {
+      background: #8d6e63;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    nav button:hover { background: #6d4c41; }
+    .profile { position: relative; }
+    .profile-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 40px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 240px;
+      color: black;
+      padding: 10px;
+    }
+    .card {
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    select, input, button {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #8d6e63;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">☕ ComposiTea</div>
+    <nav>
+      <button onclick="showPage('limbah')">Kirim Limbah</button>
+      <button onclick="showPage('status')">Status Pengiriman</button>
+      <button onclick="showPage('riwayat')">Riwayat Transaksi</button>
+    </nav>
+    <div class="profile">
+      <button onclick="toggleProfile()">👤 Profil</button>
+      <div class="profile-menu" id="profileMenu">
+        <p><b id="username"></b></p>
+        <p><b>Alamat:</b> <span id="alamat"></span></p>
+        <p><b>HP:</b> <span id="phone"></span></p>
+        <button onclick="showPage('editProfil')">Edit Profil</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Halaman Kirim Limbah -->
+  <div class="card" id="limbahPage">
+    <h3>📦 Kirim Limbah</h3>
+    <select id="limbah">
+      <option value="Ampas Coffee">Ampas Coffee</option>
+      <option value="Ampas Teh">Ampas Teh</option>
+    </select>
+    <select id="reward">
+      <option value="Pupuk Kompos">Pupuk Kompos</option>
+      <option value="Tinta Kerajinan">Tinta Kerajinan</option>
+      <option value="Spidol">Spidol</option>
+      <option value="Reward Poin">Reward Poin</option>
+    </select>
+    <input type="text" id="lokasi" placeholder="Lokasi Penjemputan">
+    <button onclick="kirimLimbah()">Kirim</button>
+    <div>
+      <h4>Total Poin: <span id="points"></span></h4>
+    </div>
+  </div>
+
+  <!-- Halaman Status -->
+  <div class="card" id="statusPage" style="display:none;">
+    <h3>🚚 Status Pengiriman</h3>
+    <select>
+      <option>Penjemputan Limbah - Dalam Proses</option>
+      <option>Pengiriman Produk - Dalam Perjalanan</option>
+      <option>Selesai</option>
+    </select>
+  </div>
+
+  <!-- Halaman Riwayat Transaksi -->
+  <div class="card" id="riwayatPage" style="display:none;">
+    <h3>📜 Riwayat Transaksi</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Limbah</th>
+          <th>Reward</th>
+          <th>Lokasi</th>
+          <th>Poin</th>
+        </tr>
+      </thead>
+      <tbody id="riwayatTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Halaman Edit Profil -->
+  <div class="card" id="editProfilPage" style="display:none;">
+    <h3>✏️ Edit Profil</h3>
+    <input type="text" id="editUsername" placeholder="Username">
+    <input type="text" id="editAlamat" placeholder="Alamat Domisili / Kantor">
+    <input type="text" id="editPhone" placeholder="Nomor Telepon Aktif">
+    <input type="password" id="editPassword" placeholder="Password Baru (opsional)">
+    <button onclick="simpanProfil()">Simpan Perubahan</button>
+  </div>
+
+  <script>
+    let activeUser = localStorage.getItem("activeUser");
+    if(!activeUser) { window.location.href="index.html"; }
+    let akun = JSON.parse(localStorage.getItem("akun_"+activeUser));
+
+    // tampilkan profil
+    function loadProfil() {
+      document.getElementById("username").innerText = akun.username;
+      document.getElementById("alamat").innerText = akun.alamat;
+      document.getElementById("phone").innerText = akun.phone;
+      document.getElementById("points").innerText = akun.points;
+    }
+    loadProfil();
+
+    function toggleProfile() {
+      let menu = document.getElementById("profileMenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+    function logout() {
+      localStorage.removeItem("activeUser");
+      window.location.href="index.html";
+    }
+    function showPage(page) {
+      document.getElementById("limbahPage").style.display = (page==="limbah") ? "block":"none";
+      document.getElementById("statusPage").style.display = (page==="status") ? "block":"none";
+      document.getElementById("riwayatPage").style.display = (page==="riwayat") ? "block":"none";
+      document.getElementById("editProfilPage").style.display = (page==="editProfil") ? "block":"none";
+      if(page==="riwayat") loadRiwayat();
+      if(page==="editProfil") loadEditForm();
+    }
+
+    // Kirim limbah
+    function kirimLimbah() {
+      let limbah = document.getElementById("limbah").value;
+      let reward = document.getElementById("reward").value;
+      let lokasi = document.getElementById("lokasi").value;
+      let poin = 10;
+      akun.points += poin;
+      document.getElementById("points").innerText = akun.points;
+
+      let transaksi = {
+        tanggal: new Date().toLocaleString(),
+        limbah: limbah,
+        reward: reward,
+        lokasi: lokasi,
+        poin: poin
+      };
+      if(!akun.riwayat) akun.riwayat = [];
+      akun.riwayat.push(transaksi);
+
+      localStorage.setItem("akun_"+activeUser, JSON.stringify(akun));
+      alert("Limbah berhasil dikirim! +10 poin");
+    }
+
+    // Load riwayat
+    function loadRiwayat() {
+      let table = document.getElementById("riwayatTable");
+      table.innerHTML = "";
+      if(akun.riwayat && akun.riwayat.length > 0) {
+        akun.riwayat.forEach(r => {
+          let row = `<tr>
+            <td>${r.tanggal}</td>
+            <td>${r.limbah}</td>
+            <td>${r.reward}</td>
+            <td>${r.lokasi}</td>
+            <td>+${r.poin}</td>
+          </tr>`;
+          table.innerHTML += row;
+        });
+      } else {
+        table.innerHTML = "<tr><td colspan='5'>Belum ada transaksi</td></tr>";
+      }
+    }
+
+    // Load form edit profil
+    function loadEditForm() {
+      document.getElementById("editUsername").value = akun.username;
+      document.getElementById("editAlamat").value = akun.alamat;
+      document.getElementById("editPhone").value = akun.phone;
+    }
+
+    // Simpan perubahan profil
+    function simpanProfil() {
+      let newUser = document.getElementById("editUsername").value;
+      let newAlamat = document.getElementById("editAlamat").value;
+      let newPhone = document.getElementById("editPhone").value;
+      let newPass = document.getElementById("editPassword").value;
+
+      // cek username baru
+      if(newUser !== akun.username) {
+        if(localStorage.getItem("akun_"+newUser)) {
+          alert("Username sudah dipakai!");
+          return;
+        }
+        // hapus data lama, ganti key baru
+        localStorage.removeItem("akun_"+akun.username);
+        akun.username = newUser;
+        activeUser = newUser;
+        localStorage.setItem("activeUser", activeUser);
+      }
+
+      akun.alamat = newAlamat;
+      akun.phone = newPhone;
+      if(newPass.trim() !== "") akun.password = newPass;
+
+      localStorage.setItem("akun_"+activeUser, JSON.stringify(akun));
+      loadProfil();
+      alert("Profil berhasil diperbarui!");
+      showPage("limbah");
+    }
+  </script>
+</body>
+</html>
